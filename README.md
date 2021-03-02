@@ -2,23 +2,23 @@
 
 ## 起動方法(API)
 
-+ apiフォルダへ移動
++ apiフォルダへ移動  
 `cd api`
 
-+ コンテナ起動
++ コンテナ起動  
 `docker-compose up -d --build`
 
 ## 起動方法(Front)
 
-+ frontフォルダへ移動
++ frontフォルダへ移動  
 `cd front`
 
-+ 既存プロジェクトの読み込み
++ 既存プロジェクトの読み込み  
 `npm install`
 
-+ axiosのインストール
++ axiosのインストール  
 `npm install axios --save`
 
-+ プロジェクトを開発モードで起動
++ プロジェクトを開発モードで起動  
 `npm run dev`
 
