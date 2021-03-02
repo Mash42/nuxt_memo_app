@@ -24,16 +24,16 @@
 
 ##　各URL
 
-+ Front(WEB画面)
-http://localhost:3000
++ Front(WEB画面)  
+http://localhost:3000  
 
-+ API(データベース操作)
-http://localhost:8000/api/v1/memo
-http://localhost:8000/api/v1/memo/insert
-http://localhost:8000/api/v1/memo/modify
-http://localhost:8000/api/v1/memo/delete
++ API(データベース操作)  
+http://localhost:8000/api/v1/memo  
+http://localhost:8000/api/v1/memo/insert  
+http://localhost:8000/api/v1/memo/modify  
+http://localhost:8000/api/v1/memo/delete  
 
-+ phpMyAdmin(データベースGUI)
-http://localhost:8080
++ phpMyAdmin(データベースGUI)  
+http://localhost:8080  
 
 
