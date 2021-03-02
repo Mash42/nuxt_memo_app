@@ -98,33 +98,13 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Welcome',
+          title: 'HOME',
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        },
-        {
           icon: 'mdi-apps',
-          title: 'memo',
+          title: 'MEMO',
           to: '/memo'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'axios',
-          to: '/axios'
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'flaskRestApi',
-          to: '/flaskRestApi'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'FAST API TEST',
-          to: '/apitest'
         },
       ],
       miniVariant: false,
