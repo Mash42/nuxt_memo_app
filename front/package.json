@@ -17,5 +17,9 @@
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.3"
-  }
+  },
+  "description": "## Build Setup",
+  "main": "nuxt.config.js",
+  "author": "",
+  "license": "ISC"
 }

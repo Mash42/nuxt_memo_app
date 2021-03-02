@@ -25,7 +25,7 @@
             <v-icon>mdi-content-save</v-icon>保存
           </v-btn>
           <v-btn v-if="!modify_flg" @click="form_reset" color="blue" elevation="5">
-            <v-icon>mdi-content-save</v-icon>クリア
+            <v-icon>mdi-autorenew</v-icon>クリア
           </v-btn>
           <v-btn v-if="modify_flg" @click="modify_execute" color="pink darken-2" elevation="5" :disabled="!form_valid" class="mr-4">
             <v-icon>mdi-content-save-all</v-icon>修正
@@ -37,7 +37,7 @@
     </v-col>
     <v-col cols="6">
       <v-btn 
-        v-if="memo.length > 0" 
+        v-if="memo_list.length > 0" 
         @click="table_color_chg"
         :color="color_chg_btn.color"
         :class="color_chg_btn.class"
@@ -47,7 +47,7 @@
       <v-data-table 
         :headers="memo_list_headers"
         :items="memo_list"
-        v-if="memo.length > 0"
+        v-if="memo_list.length > 0"
         item-key="ID"
         :dark="dark_table"
       >
@@ -133,14 +133,13 @@ export default {
       },
     };
   },
-  computed: {
-    memo: function(){ 
-      return this.$store.state.memo.memo; 
-    },
-  },
   methods: {
-    insert: function(){
-      this.api_post_memo(this.title, this.content);
+    insert: async function(){
+      const response_insert = await this.api_memo_insert(this.title, this.content);
+      console.log(response_insert);
+      const response_get_memo = await this.api_get_memos();
+      console.log(response_get_memo);
+      this.memo_list = response_get_memo.data;
       this.form_reset();
     },
     modify: function(item){
@@ -149,11 +148,12 @@ export default {
       this.content = item.content;
       this.modify_memo = item;
     },
-    modify_execute: function(){
-      var memo_data = this.modify_memo;
-      memo_data.title = this.title;
-      memo_data.content = this.content;
-      this.$store.commit('memo/modify', memo_data);
+    modify_execute: async function(){
+      const response = await this.api_memo_modify(this.modify_memo.id, this.title, this.content);
+      console.log(response);
+      const response_get_memo = await this.api_get_memos();
+      console.log(response_get_memo);
+      this.memo_list = response_get_memo.data;
       this.form_reset();
     },
     modify_cancel: function(){
@@ -170,12 +170,16 @@ export default {
       this.modify_flg = false;
       this.$refs.form.resetValidation();
     },
-    remove: function(item){
+    remove: async function(item){
       if(this.modify_flg && this.modify_memo.id === item.id){
         alert("現在編集中のメモは削除できません。");
         return;
       }
-      this.$store.commit('memo/remove', item);
+      const response_delete = await this.api_memo_delete(item.id);
+      console.log(response_delete);
+      const response_get_memo = await this.api_get_memos();
+      console.log(response_get_memo);
+      this.memo_list = response_get_memo.data;
     },
     click_table_row: function(item) {
       this.copy(item);
@@ -186,29 +190,59 @@ export default {
       this.color_chg_btn.class = this.dark_table?'':'white--text'
       this.color_chg_btn.text = this.dark_table?'ホワイトモードへ':'ダークモードへ'
     },
-    api_post_memo: async function(title, content){
-      const response = await this.$axios.post('http://localhost:8000/api/v1/memo/insert',
-      {
-        "title": title,
-        "content": content,
-      });
-      console.log(response);
-      this.api_get_memos();
-    },
     api_get_memos: async function(){
-      const response = await this.$axios.get('http://localhost:8000/api/v1/memo');
-      this.memo_list = response.data;
-    }
+      try{
+        return (await this.$axios.get('http://localhost:8000/api/v1/memo'))
+      } catch (error) {
+        return error.response.status;
+      }
+    },
+    api_memo_insert: async function(title, content){
+      try{
+        return (
+          await this.$axios
+          .post('http://localhost:8000/api/v1/memo/insert',
+            {"title": title,
+             "content": content,
+            }
+          )
+        );
+      } catch (error) {
+        throw errro.response.status
+      }
+    },
+    api_memo_modify: async function(id, title, content){
+      try{
+        return (
+          await this.$axios
+          .post('http://localhost:8000/api/v1/memo/modify',
+            {"id": id,
+             "title": title,
+             "content": content,
+            }
+          )
+        );
+      } catch (error) {
+        throw errro.response.status
+      }
+    },
+    api_memo_delete: async function(id){
+      try{
+        return (
+          await this.$axios
+          .post('http://localhost:8000/api/v1/memo/delete',
+            {"id": id}
+          )
+        );
+      } catch (error) {
+        throw errro.response.status;
+      }
+    },
   },
-  created: function(){
+  created: async function(){
     console.log('created');
-    this.api_get_memos();
-    //this.memo_list = this.api_get_memos();
-    //IDのリセット
-    //this.$store.commit('memo/set_latest_id');
-    //this.$store.commit('memo/set_page',0);
-    //メモを全消ししたいときに有効にすればいい
-    //this.$store.commit('memo/memo_list',[]);
+    const response = await this.api_get_memos();
+    this.memo_list = response.data;
   },
 }
 </script>

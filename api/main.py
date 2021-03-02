@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware # 追加
-from pydantic import BaseModel  # リクエストbodyを定義するために必要
-from typing import List  # ネストされたBodyを定義するために必要
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List
 import json
 import uvicorn
 import pymysql
@@ -31,8 +31,8 @@ MYSQL_OPTIONS = {"host": 'db'
 # リクエストbodyを定義(初期値を設定しないと必須項目になってしまうため注意)
 class Memo(BaseModel):
     id: int = 0
-    title: str
-    content: str
+    title: str = ''
+    content: str = ''
     create_day: int = 0
     create_time: int = 0
 
@@ -58,11 +58,24 @@ def api_insert_memo(memo: Memo):
     now = datetime.now(JST)
     memo.create_day = now.year * 10000 + now.month * 100 + now.day
     memo.create_time = now.hour * 10000 + now.minute * 100 + now.second
-    print("時間" + str(now.hour))
-    print("分" + str(now.minute))
-    print("秒" + str(now.second))
     try:
         insert_memo(memo)
+    except:
+        return {"res": "ng"}
+    return {"res": "ok"}
+
+@app.post("/api/v1/memo/modify")
+def api_modify_memo(memo: Memo):
+    try:
+        modify_memo(memo)
+    except:
+        return {"res": "ng"}
+    return {"res": "ok"}
+
+@app.post("/api/v1/memo/delete")
+def api_delete_memo(memo: Memo):
+    try:
+        delete_memo(memo)
     except:
         return {"res": "ng"}
     return {"res": "ok"}
@@ -92,17 +105,53 @@ def get_memo_data():
                        })
     return results
 
+# メモ追加
 def insert_memo(memo: Memo):
     conn = getConnection()
     # Insert処理
     with conn.cursor() as cursor:
         # idはAUTO_INCREMENTのため、指定しない
-        sql = "INSERT INTO TBL_MEMO (ID, TITLE, CONTENT, CREATE_DAY, CREATE_TIME) VALUES (null, %s, %s, %s, %s)"
+        sql = """
+              INSERT INTO TBL_MEMO (ID, TITLE, CONTENT, CREATE_DAY, CREATE_TIME) 
+              VALUES (null, %s, %s, %s, %s)
+              """
         r = cursor.execute(sql, (memo.title, memo.content, memo.create_day, memo.create_time))
         print(r) # -> 1
         # autocommitではないので、明示的にコミットする
         conn.commit()
 
+# メモ修正
+def modify_memo(memo: Memo):
+    conn = getConnection()
+    # Update処理
+    with conn.cursor() as cursor:
+        sql = """
+              UPDATE TBL_MEMO 
+                 SET TITLE = %s,
+                     CONTENT = %s
+               WHERE ID = %s 
+              """
+        r = cursor.execute(sql, (memo.title, memo.content, memo.id))
+        print(r) # -> 1
+        # autocommitではないので、明示的にコミットする
+        conn.commit()
+
+# メモ削除
+def delete_memo(memo: Memo):
+    conn = getConnection()
+    # Delete処理
+    with conn.cursor() as cursor:
+        sql = """
+              DELETE FROM TBL_MEMO 
+               WHERE ID = %s 
+              """
+        r = cursor.execute(sql, (memo.id))
+        print(r) # -> 1
+        # autocommitではないので、明示的にコミットする
+        conn.commit()
+
+
+# データベースコネクション生成
 def getConnection():
     conn = pymysql.connect(host=MYSQL_OPTIONS['host']
                           ,port=MYSQL_OPTIONS['port']

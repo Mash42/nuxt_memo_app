@@ -13,6 +13,17 @@ services:
       - MYSQL_DATABASE=memo_db
       - MYSQL_USER=memo_user
       - MYSQL_PASSWORD=memo_pass_db
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+      - PMA_USER=memo_user
+      - PMA_PASSWORD=memo_pass_db
+    links:
+      - db
+    ports:
+      - 8080:80
   api:
     container_name: "api"
     build: .
