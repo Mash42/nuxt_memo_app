@@ -36,19 +36,6 @@ class Memo(BaseModel):
     create_day: int = 0
     create_time: int = 0
 
-
-@app.get("/api/v1/users")
-def api_users():
-    users = [
-        {"id": 1, "name": "1111111"},
-        {"id": 2, "name": "sfafasf"},
-        {"id": 3, "name": "aaaa"},
-        {"id": 4, "name": "fsgdgdffdfdaf"},
-        {"id": 5, "name": "c"},
-        {"id": 6, "name": "aaaa"}
-    ]
-    return users
-
 @app.get("/api/v1/memo")
 def api_memo():
     return get_memo_data()
