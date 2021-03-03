@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="6">
+    <v-col cols="12" xl="6" lg="6" md="6" sm="12" xs="12">
       <h1 class="mt-2">{{ page_title }}</h1>
         <v-form
           ref="form"
@@ -35,7 +35,7 @@
           </v-btn>
         </v-form>
     </v-col>
-    <v-col cols="6">
+    <v-col cols="12" xl="6" lg="6" md="6" sm="12" xs="12">
       <v-btn 
         v-if="memo_list.length > 0" 
         @click="table_color_chg"
@@ -47,7 +47,6 @@
       <v-data-table 
         :headers="memo_list_headers"
         :items="memo_list"
-        v-if="memo_list.length > 0"
         item-key="ID"
         :dark="dark_table"
       >
