@@ -22,7 +22,7 @@
 + プロジェクトを開発モードで起動  
 `npm run dev`
 
-##　各URL
+## 各URL
 
 + Front(WEB画面)  
 http://localhost:3000  
